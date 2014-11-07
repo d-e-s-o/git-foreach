@@ -23,7 +23,7 @@ if [ $# -ge 1 ]
 then
   COMMAND="git ${@}"
 else
-  COMMAND="git status --short"
+  COMMAND="git status --short --untracked-files=no"
 fi
 
 find . -type d -iname ".git" | sed "s!.*!(cd \$(dirname \"\0\") \&\& echo \${PWD} \&\& ${COMMAND})!g" | sh

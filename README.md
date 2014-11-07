@@ -21,7 +21,7 @@ A sample invocation can look like this:
 ```
 $ git foreach
 /dir/repo3
-?? untracked-file.py
+ M modified-file.py
 /repo2
 D  deleted-file.asm
 /repo1
