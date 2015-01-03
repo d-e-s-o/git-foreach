@@ -18,10 +18,12 @@
 # ***************************************************************************/
 
 GETOPT='/usr/bin/getopt'
-SHORT_OPTS='nq'
-LONG_OPTS='dry-run,quiet'
+SHORT_OPTS='hnq'
+LONG_OPTS='dry-run,help,quiet'
+SELF=$(basename "${0}")
 DRY_RUN=0
 QUIET=0
+HELP=0
 
 RESULT=$("${GETOPT}" --options="${SHORT_OPTS}" --longoptions="${LONG_OPTS}" -- "${@}")
 
@@ -35,10 +37,30 @@ while true; do
   case "$1" in
     -n | --dry-run ) DRY_RUN=1; shift ;;
     -q | --quiet ) QUIET=1; shift ;;
+    -h | --help ) HELP=1; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
 done
+
+if [ ${HELP} -ne 0 ]; then
+  cat <<EOT
+${SELF}: Execute a git command in each git repository below the CWD.
+
+Usage:
+  ${SELF} [OPTION] [--] [GITCOMMAND]
+  ${SELF} [OPTION] -- [GITCOMMAND] [GITCOMMAND-OPTIONS]
+
+  If no option is supplied the command to run defaults to:
+  $ git status --short --untracked-files=no
+
+Options:
+  -n, --dry-run:  Just show what would be performed.
+  -q, --quiet:    Suppress unnecessary ${SELF} output.
+  -h, --help:     Display this help text.
+EOT
+  exit 0
+fi
 
 # If there are one or more positional arguments then we just pass them to git.
 # Otherwise we use the default command which displays the status.
