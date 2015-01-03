@@ -17,6 +17,27 @@
 # *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
 # ***************************************************************************/
 
+GETOPT='/usr/bin/getopt'
+SHORT_OPTS='n'
+LONG_OPTS='dry-run'
+DRY_RUN=0
+
+RESULT=$("${GETOPT}" --options="${SHORT_OPTS}" --longoptions="${LONG_OPTS}" -- "${@}")
+
+# If getopt failed we exit here. It will have printed a reasonable error
+# message.
+[ $? != 0 ] && exit 1
+
+eval set -- ${RESULT}
+
+while true; do
+  case "$1" in
+    -n | --dry-run ) DRY_RUN=1; shift ;;
+    -- ) shift; break ;;
+    * ) break ;;
+  esac
+done
+
 # If there are one or more positional arguments then we just pass them to git.
 # Otherwise we use the default command which displays the status.
 if [ $# -ge 1 ]
@@ -28,6 +49,11 @@ fi
 
 DIR="\$(dirname \"\0\")"
 EXPORT_REPO="export REPO=\$(basename ${DIR})"
-REPLACEMENT="s!.*!(echo ${DIR} \&\& cd ${DIR} \&\& ${EXPORT_REPO} \&\& ${COMMAND})!g"
+
+if [ ${DRY_RUN} -ne 0 ]; then
+  REPLACEMENT="s!.*!(echo ${DIR} \&\& ${EXPORT_REPO} \&\& echo ${COMMAND})!g"
+else
+  REPLACEMENT="s!.*!(echo ${DIR} \&\& cd ${DIR} \&\& ${EXPORT_REPO} \&\& ${COMMAND})!g"
+fi
 
 find . -type d -iname ".git" | sed "${REPLACEMENT}" | sh

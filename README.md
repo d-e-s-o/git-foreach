@@ -55,6 +55,28 @@ avoid any substitution by the currently running shell. In the example
 above, the correct behavior is achieved by putting the string containing
 the variable reference in single quotes.
 
+In case one is unsure about the proper escaping or just wants to double
+check the to-be-invoked command, the -n/--dry-run option can be used:
+
+```
+$ git foreach --dry-run remote add github 'git@github.com:d-e-s-o/${REPO}.git'
+./dir/repo3
+git remote add github git@github.com:d-e-s-o/repo3.git
+./repo2
+git remote add github git@github.com:d-e-s-o/repo2.git
+./repo1
+git remote add github git@github.com:d-e-s-o/repo1.git
+```
+
+Using this option, the command that is about to be executed is shown for every
+repository. No action aside from that is actually performed.
+
+If you want to pass additional command line options to the ``git`` command to
+run in each repository, you should separate the command along with its options
+so that those options are not interpreted by **git-foreach**. E.g.,
+
+```git foreach -- diff -U10```
+
 
 Installation
 ------------
