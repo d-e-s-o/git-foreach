@@ -71,6 +71,18 @@ git remote add github git@github.com:d-e-s-o/repo1.git
 Using this option, the command that is about to be executed is shown for every
 repository. No action aside from that is actually performed.
 
+As was apparent from the examples shown so far, **git-foreach** by default
+prints the directory an action is performed (or is to be performed) in before
+the result of the command is displayed. Using the -q/--quiet option, the script
+can be silenced:
+
+```
+git foreach --dry-run --quiet remote add github 'git@github.com:d-e-s-o/${REPO}.git'
+git remote add github git@github.com:d-e-s-o/repo3.git
+git remote add github git@github.com:d-e-s-o/repo2.git
+git remote add github git@github.com:d-e-s-o/repo1.git
+```
+
 If you want to pass additional command line options to the ``git`` command to
 run in each repository, you should separate the command along with its options
 so that those options are not interpreted by **git-foreach**. E.g.,

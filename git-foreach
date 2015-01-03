@@ -18,9 +18,10 @@
 # ***************************************************************************/
 
 GETOPT='/usr/bin/getopt'
-SHORT_OPTS='n'
-LONG_OPTS='dry-run'
+SHORT_OPTS='nq'
+LONG_OPTS='dry-run,quiet'
 DRY_RUN=0
+QUIET=0
 
 RESULT=$("${GETOPT}" --options="${SHORT_OPTS}" --longoptions="${LONG_OPTS}" -- "${@}")
 
@@ -33,6 +34,7 @@ eval set -- ${RESULT}
 while true; do
   case "$1" in
     -n | --dry-run ) DRY_RUN=1; shift ;;
+    -q | --quiet ) QUIET=1; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -50,10 +52,16 @@ fi
 DIR="\$(dirname \"\0\")"
 EXPORT_REPO="export REPO=\$(basename ${DIR})"
 
-if [ ${DRY_RUN} -ne 0 ]; then
-  REPLACEMENT="s!.*!(echo ${DIR} \&\& ${EXPORT_REPO} \&\& echo ${COMMAND})!g"
+if [ ${QUIET} -ne 0 ]; then
+  PRINT_DIR="true"
 else
-  REPLACEMENT="s!.*!(echo ${DIR} \&\& cd ${DIR} \&\& ${EXPORT_REPO} \&\& ${COMMAND})!g"
+  PRINT_DIR="echo ${DIR}"
+fi
+
+if [ ${DRY_RUN} -ne 0 ]; then
+  REPLACEMENT="s!.*!(${PRINT_DIR} \&\& ${EXPORT_REPO} \&\& echo ${COMMAND})!g"
+else
+  REPLACEMENT="s!.*!(${PRINT_DIR} \&\& cd ${DIR} \&\& ${EXPORT_REPO} \&\& ${COMMAND})!g"
 fi
 
 find . -type d -iname ".git" | sed "${REPLACEMENT}" | sh
