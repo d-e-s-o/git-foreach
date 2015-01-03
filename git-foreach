@@ -26,4 +26,8 @@ else
   COMMAND="git status --short --untracked-files=no"
 fi
 
-find . -type d -iname ".git" | sed "s!.*!(cd \$(dirname \"\0\") \&\& echo \${PWD} \&\& export REPO=\$(basename \$(dirname \"\0\")) \&\& ${COMMAND})!g" | sh
+DIR="\$(dirname \"\0\")"
+EXPORT_REPO="export REPO=\$(basename ${DIR})"
+REPLACEMENT="s!.*!(echo ${DIR} \&\& cd ${DIR} \&\& ${EXPORT_REPO} \&\& ${COMMAND})!g"
+
+find . -type d -iname ".git" | sed "${REPLACEMENT}" | sh
