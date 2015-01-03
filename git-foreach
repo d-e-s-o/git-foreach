@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #/***************************************************************************
-# *   Copyright (C) 2014 deso (deso@posteo.net)                             *
+# *   Copyright (C) 2014-2015 deso (deso@posteo.net)                        *
 # *                                                                         *
 # *   This program is free software: you can redistribute it and/or modify  *
 # *   it under the terms of the GNU General Public License as published by  *
@@ -26,4 +26,4 @@ else
   COMMAND="git status --short --untracked-files=no"
 fi
 
-find . -type d -iname ".git" | sed "s!.*!(cd \$(dirname \"\0\") \&\& echo \${PWD} \&\& ${COMMAND})!g" | sh
+find . -type d -iname ".git" | sed "s!.*!(cd \$(dirname \"\0\") \&\& echo \${PWD} \&\& export REPO=\$(basename \$(dirname \"\0\")) \&\& ${COMMAND})!g" | sh

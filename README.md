@@ -28,6 +28,34 @@ D  deleted-file.asm
 A  newly-added-file.c
 ```
 
+In order for batch operations to be able to reference the repository a
+command is invoked in, **git-foreach** provides a special variable,
+``REPO``. The variable contains the name of the very repository the
+command is invoked in (i.e., the name of the directory the repository is
+contained in).
+
+An example incorporating this variable looks as follows:
+
+```
+$ git foreach remote add github 'git@github.com:d-e-s-o/${REPO}.git'
+$ git foreach remote -v
+/dir/repo3
+github  git@github.com:d-e-s-o/repo3.git (fetch)
+github  git@github.com:d-e-s-o/repo3.git (push)
+/repo2
+github  git@github.com:d-e-s-o/repo2.git (fetch)
+github  git@github.com:d-e-s-o/repo2.git (push)
+/repo1
+github  git@github.com:d-e-s-o/repo1.git (fetch)
+github  git@github.com:d-e-s-o/repo1.git (push)
+```
+
+It is important to properly escape the variable reference in order to
+avoid any substitution by the currently running shell. In the example
+above, the correct behavior is achieved by putting the string containing
+the variable reference in single quotes.
+
+
 Installation
 ------------
 
